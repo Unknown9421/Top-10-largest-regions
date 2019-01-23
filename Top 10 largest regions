@@ -1,0 +1,33 @@
+# csv file: https://www.gso.gov.vn/default.aspx?tabid=714
+# Vẽ biểu đồ 10 vùng có diện tích lớn nhất
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+link = '/home/ducnguyen/Ducnv_PyMi/pyfml/exercises/dientich.csv'
+
+def check_str(input_data):
+    return type(input_data) == str
+def check_numeric(input_data):
+    lst = [i.isdigit() for i in input_data]
+    return len(input_data) - sum(lst) < 2
+raw_data = pd.read_csv(link, sep=';', header=1)
+data_remove_Na = raw_data[raw_data['2015'].apply(check_str)]
+data_remove_str = data_remove_Na[data_remove_Na['2015'].apply(
+    check_numeric)]
+clean_data = data_remove_str.convert_objects(convert_numeric=True)
+top_10 = clean_data.nlargest(10, '2015')
+
+top_10.columns = ['name', 'y_2015', 'y_2014', 'y_2013', 'y_2012', 'y_2011']
+
+# fig,ax = plt.subplots()
+# ax.bar(np.arange(10), b.b, width=0.8, color='r')
+y_pos = np.arange(len(top_10.index))
+plt.bar(y_pos, top_10.y_2015, align='center', alpha=0.5, width=0.5)
+plt.xticks(y_pos, top_10.name)
+plt.ylabel('Diện tích')
+plt.title('Biểu đồ diện tích')
+plt.xticks(rotation=90)
+plt.show()
